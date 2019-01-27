@@ -2,6 +2,8 @@
 
 var Service, Characteristic, ChannelCharacteristic;
 
+var util = require('util');
+
 var vodafone = require('vodafone-controller');
 
 module.exports = function(homebridge) {

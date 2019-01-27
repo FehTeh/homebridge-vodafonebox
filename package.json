@@ -1,6 +1,6 @@
 {
   "name": "homebridge-vodafonebox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vodafone Box plugin for homebridge",
   "dependencies": {
     "vodafone-controller": "^1.0.0"
