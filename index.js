@@ -2,36 +2,38 @@
 
 var Service, Characteristic, ChannelCharacteristic;
 
-var util = require('util');
+var inherits  = require('util').inherits;;
 
 var vodafone = require('vodafone-controller');
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
+	Characteristic = homebridge.hap.Characteristic;
+	
     makeChannelCharacteristic();
-    homebridge.registerAccessory("homebridge-vodafonebox", "VodafoneBox", VodafoneBox);
+	
+	homebridge.registerAccessory("homebridge-vodafonebox", "VodafoneBox", VodafoneBox);
 }
 
 function VodafoneBox(log, config) {
     this.log = log;
     this.config = config;
     this.name = config['name'];
+	this.ip = config['ip']
 
-    this.vodafoneConfig = {
-        ip: config['ip']
-    };
-
-    this.service = new Service.Switch(this.name);
+	this.service = new Service.Switch(this.name);
+	
     this.service.getCharacteristic(Characteristic.On)
         .on('get', this._getOn.bind(this))
-        .on('set', this._setOn.bind(this));
-    this.service.addCharacteristic(ChannelCharacteristic)
+		.on('set', this._setOn.bind(this));
+		
+	this.service.addCharacteristic(ChannelCharacteristic)
         .on('get', this._getChannel.bind(this))
         .on('set', this._setChannel.bind(this));
 }
 
 function makeChannelCharacteristic() {
+
     ChannelCharacteristic = function () {
         Characteristic.call(this, 'Channel', '212131F4-2E14-4FF4-AE13-C97C3232499D');
         this.setProps({
@@ -39,10 +41,10 @@ function makeChannelCharacteristic() {
             unit: Characteristic.Units.NONE,
             perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
         });
-        this.value = "1";
+        this.value = this.getDefaultValue();
     };
 
-    util.inherits(ChannelCharacteristic, Characteristic);
+    inherits(ChannelCharacteristic, Characteristic);
 }
 
 VodafoneBox.prototype.getServices = function() {
@@ -58,7 +60,7 @@ VodafoneBox.prototype.getServices = function() {
 VodafoneBox.prototype._getOn = function(callback) {
 	var accessory = this;
 
-	var state = vodafone.getState(accessory.vodafoneConfig.ip);
+	var state = vodafone.getState(accessory.ip);
 
 	callback(null, state == "ON");
 
@@ -68,11 +70,11 @@ VodafoneBox.prototype._setOn = function(on, callback) {
     var accessory = this;
 	var command = "power";
 	
-	vodafone.setKey(accessory.vodafoneConfig.ip, command);
+	vodafone.setKey(accessory.ip, command);
 
 	setTimeout(function() {
 
-		var state = vodafone.getState(accessory.vodafoneConfig.ip);
+		var state = vodafone.getState(accessory.ip);
 
 		callback(on ? (state == "ON" ? null : "Failed") : (state == "OFF" ? null : "Failed"));
 
@@ -83,7 +85,7 @@ VodafoneBox.prototype._setOn = function(on, callback) {
 VodafoneBox.prototype._getChannel = function(callback) {
 	var accessory = this;
 	
-	var channel = vodafone.getChannel(accessory.vodafoneConfig.ip)
+	var channel = vodafone.getChannel(accessory.ip)
 
 	channel == "UNKNOWN" ? callback("Failed") : callback(null, channel);
 }
