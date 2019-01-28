@@ -17,5 +17,5 @@
     "homebridge-plugin"
   ],
   "author": "Filipe Tomas",
-  "license": "ISC"
+  "license": "MIT"
 }
