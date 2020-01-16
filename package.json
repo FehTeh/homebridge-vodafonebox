@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "Vodafone Box plugin for homebridge",
   "dependencies": {
-    "vodafone-controller": "^1.0.0"
+    "vodafone-controller": "^1.0.1"
   },
   "engines": {
     "node": ">=0.12.0",
